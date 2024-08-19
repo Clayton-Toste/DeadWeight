@@ -44,6 +44,9 @@ TagManager:
   - name: Floor
     uniqueID: 1841374901
     locked: 0
+  - name: Wall
+    uniqueID: 3605120179
+    locked: 0
   - name: Character
     uniqueID: 823229989
     locked: 0
