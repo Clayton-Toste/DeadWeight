@@ -100,6 +100,7 @@ MonoBehaviour:
   value: 10
   range: 3
   damage: 4
+  hitNoise: {fileID: 8300000, guid: 323188233391d9324b499bbff50911e0, type: 3}
 --- !u!212 &6724090099146444681
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -227,14 +228,14 @@ MonoBehaviour:
     m_Mesh: {fileID: 0}
     m_LocalBounds:
       m_Center: {x: 0, y: 0, z: 0}
-      m_Extent: {x: 0.5921478, y: 0.5921478, z: 0}
+      m_Extent: {x: 1, y: 1, z: 0}
     m_EdgeProcessing: 1
-    m_TrimEdge: 0.4
+    m_TrimEdge: 0
     m_FlipX: 0
     m_FlipY: 0
     m_InitialTrim: 0
   m_CastingOption: 1
-  m_PreviousTrimEdge: 0.4
+  m_PreviousTrimEdge: 0
   m_PreviousEdgeProcessing: 1
   m_PreviousShadowCastingSource: 2
   m_PreviousShadowShape2DSource: {fileID: 2190085968329179302}
@@ -268,7 +269,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0f653d0fd89b936d8be33496ec775d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shuyet: {fileID: 908237706890041320, guid: 41b4b9387bd1db7e0bd9effe96696438, type: 3}
+  shuyet: {fileID: 908237706890041320, guid: e2c2e59b899baa0a18ac4e405f784b8c, type: 3}
 --- !u!1 &6638276605665215523
 GameObject:
   m_ObjectHideFlags: 0

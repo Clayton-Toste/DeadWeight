@@ -14,7 +14,7 @@ public class Spawner : MonoBehaviour
         if (countdown <= 0.0f)
         {
             countdown += 5.0f;
-            if ((Player.singleton.transform.position - transform.position).magnitude < 7.0f && FindObjectsByType<Enemy>(FindObjectsSortMode.None).Where(enemy => (enemy.transform.position - transform.position).magnitude < 20.0f).Count() < 10)
+            if ((Player.singleton.transform.position - transform.position).magnitude < 10.0f && FindObjectsByType<Enemy>(FindObjectsSortMode.None).Where(enemy => (enemy.transform.position - transform.position).magnitude < 20.0f).Count() < 10)
             {
                 for (float theta = 0; theta < 2 * MathF.PI; theta += MathF.PI / 3.0f)
                 {

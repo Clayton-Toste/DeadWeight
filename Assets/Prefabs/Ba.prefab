@@ -23,7 +23,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2644067933475256047
 Transform:
   m_ObjectHideFlags: 0
@@ -56,6 +56,7 @@ MonoBehaviour:
   value: 2
   range: 1.5
   damage: 2
+  hitNoise: {fileID: 8300000, guid: c082c9a59404603218d741b7a569fe98, type: 3}
 --- !u!212 &536238202645985363
 SpriteRenderer:
   m_ObjectHideFlags: 0

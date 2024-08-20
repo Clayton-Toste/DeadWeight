@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 [RequireComponent(typeof(Animator)), RequireComponent(typeof(Rigidbody2D))]
 public class Player : MonoBehaviour
@@ -13,9 +14,12 @@ public class Player : MonoBehaviour
     [Header("Config")]
     public int startingHealth;
     public GameObject dieGUI;
+    public GameObject winGUI;
+    public VideoPlayer outroVideo;
     public Slider healthSlider;
-    public TMP_Text soulsCount;
+    public TMP_Text soulsCounter, soulsOutro, soulsEnding;
     public AudioClip hitNoise, deathNoise;
+    public GameObject moveTutorial, dashTutorial, sickleTutorial, scytheTutorial;
 
     [Header("Controls")]
     public bool receivingInput;
@@ -39,7 +43,9 @@ public class Player : MonoBehaviour
         set
         {
             souls = value;
-            soulsCount.text = $"SOULS: {souls}";
+            soulsCounter.text = $"SOULS: {souls}";
+            soulsOutro.text = $"Total Souls: {souls}";
+            soulsEnding.text = $"YOU GOT {souls} SOULS!";
         }
     }
 
@@ -75,12 +81,21 @@ public class Player : MonoBehaviour
             animator.SetFloat("MoveX", movement.x);
             animator.SetFloat("MoveY", movement.y);
 
-            if (playerDash.WasPressedThisFrame() && movement.magnitude != 0.0f)
+            if (movement.magnitude != 0 && moveTutorial.activeSelf)
+            {
+                moveTutorial.SetActive(false);
+                dashTutorial.SetActive(true);
+            }
+            else if (playerDash.WasPressedThisFrame() && movement.magnitude != 0.0f)
             {
                 animator.SetTrigger("Dash");
+                if (dashTutorial.activeSelf)
+                {
+                    dashTutorial.SetActive(false);
+                    sickleTutorial.SetActive(true);
+                }
             }
-
-            if (playerScytheKeyboard.WasPressedThisFrame())
+            else if (playerScytheKeyboard.WasPressedThisFrame())
             {
                 Vector2 aim = playerAim.ReadValue<Vector2>();
 
@@ -88,16 +103,24 @@ public class Player : MonoBehaviour
                     aim = movement;
 
                 animator.SetTrigger($"Scythe{GetDirection(aim)}");
-            }
 
-            if (playerScytheMouse.WasPressedThisFrame())
+                if (scytheTutorial.activeSelf)
+                {
+                    scytheTutorial.SetActive(false);
+                }
+            }
+            else if (playerScytheMouse.WasPressedThisFrame())
             {
                 Vector2 aim = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue()) - transform.position;
 
                 animator.SetTrigger($"Scythe{GetDirection(aim)}");
-            }
 
-            if (playerSickleKeyboard.WasPressedThisFrame())
+                if (scytheTutorial.activeSelf)
+                {
+                    scytheTutorial.SetActive(false);
+                }
+            }
+            else if (playerSickleKeyboard.WasPressedThisFrame())
             {
                 Vector2 aim = playerAim.ReadValue<Vector2>();
 
@@ -105,18 +128,35 @@ public class Player : MonoBehaviour
                     aim = movement;
 
                 animator.SetTrigger($"Sickle{GetDirection(aim)}");
-            }
 
-            if (playerSickleMouse.WasPressedThisFrame())
+                if (sickleTutorial.activeSelf)
+                {
+                    sickleTutorial.SetActive(false);
+                    scytheTutorial.SetActive(true);
+                }
+            }
+            else if (playerSickleMouse.WasPressedThisFrame())
             {
                 Vector2 aim = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue()) - transform.position;
 
                 animator.SetTrigger($"Sickle{GetDirection(aim)}");
+                
+                if (sickleTutorial.activeSelf)
+                {
+                    sickleTutorial.SetActive(false);
+                    scytheTutorial.SetActive(true);
+                }
             }
         }
 
         Vector2 stabilizedVelocity = targetMovement.normalized * (MathF.Abs(targetMovement.x) + MathF.Abs(targetMovement.y)) * new Vector2(1.0f, MathF.Sqrt(2.0f) / 2.0f);
-        rb2.linearVelocity = Vector2.SmoothDamp(rb2.linearVelocity, stabilizedVelocity, ref acceleration, 0.1f);
+        rb2.linearVelocity = Vector2.SmoothDamp(rb2.linearVelocity, stabilizedVelocity, ref acceleration, 0.02f);
+
+        if ((ulong)outroVideo.frame + 1 == outroVideo.frameCount && outroVideo.frameCount > 0)
+        {
+            outroVideo.transform.GetChild(0).gameObject.SetActive(false);
+            winGUI.SetActive(true);
+        }
     }
 
     static string GetDirection(Vector2 vector)
@@ -130,6 +170,14 @@ public class Player : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collider)
     {
+        if (collider.name == "GameEnd")
+        {
+            outroVideo.gameObject.SetActive(true);
+            transform.position = new Vector3(1000.0f, 0.0f);
+            animator.enabled = false;
+            return;
+        }
+
         if (collider.transform.parent == null)
             return;
 
@@ -139,7 +187,7 @@ public class Player : MonoBehaviour
             return;
 
         AudioSource.PlayClipAtPoint(hitNoise, transform.position, 0.2f);
-            
+
         Health -= enemy.damage;
         if (Health <= 0)
         {
